@@ -6,7 +6,7 @@ import { apiRouter } from './api.routes';
 @Module({
   imports: [
     AuthModule,
-    RouterModule.register(apiRouter)
+    RouterModule.register(apiRouter),
   ]
 })
 export class ApiModule {}
