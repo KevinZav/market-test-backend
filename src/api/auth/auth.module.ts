@@ -9,6 +9,7 @@ import { jwtStrategySecret } from './strategies/jwt-secret.strategy';
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [AuthController],
-  providers: [AuthService, localStrategy, jwtStrategySecret]
+  providers: [AuthService, localStrategy, jwtStrategySecret],
+  exports: [AuthService]
 })
 export class AuthModule {}

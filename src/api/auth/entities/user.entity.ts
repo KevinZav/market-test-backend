@@ -1,7 +1,8 @@
 import { Exclude } from "class-transformer";
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { RoleEnum } from "../enums/roles.enum";
 import * as bcrypt from 'bcrypt';
+import { Product } from "src/api/products/entities/product.entity";
 
 @Entity({name: 'authentications'})
 export class User {
@@ -20,6 +21,9 @@ export class User {
 
   @Column({ type: 'enum', enum: RoleEnum })
   role: RoleEnum;
+
+  @OneToMany(() => Product, product => product.user)
+  products: Product[];
 
   @BeforeInsert()
   async hashPassword() {

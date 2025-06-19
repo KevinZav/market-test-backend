@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { createAuthDto } from './dtos/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { instanceToPlain } from 'class-transformer';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +26,7 @@ export class AuthService {
     return await this.userRepository.save(user);
   }
 
-  private async getUser(email: string) {
+  public async getUser(email: string) {
     const user = await this.userRepository.findOneBy({email});
 
     if (!user) {
@@ -54,5 +55,18 @@ export class AuthService {
       token: this.jwtService.sign(payload),
       payload
     }
+  }
+
+  public async getUsers(search?: string) {
+    const query = this.userRepository.createQueryBuilder('user');
+
+    if(search) {
+      query.andWhere(
+        '(user.name ILIKE :search OR user.email ILIKE :search)',
+        {search: `%${search}%`});
+    }
+    const users = await query.getMany();
+
+    return instanceToPlain(users);
   }
 }
