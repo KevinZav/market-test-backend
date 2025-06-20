@@ -45,3 +45,13 @@ JWT_SEED_EXPIRETIME=
 ````bash
 npm run start:dev
 ````
+
+
+### 4. Usage
+
+You can use this project if you get PostgreSQL database and get jwt public and secret keys.
+
+Endpoint information in `/api/docs` with Swagger.
+
+[Project deployed URL](https://market-test-backend-production.up.railway.app)
+[Project deployed docs](https://market-test-backend-production.up.railway.app/api/docs)
