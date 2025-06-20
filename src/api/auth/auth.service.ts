@@ -49,7 +49,8 @@ export class AuthService {
   public generateJwt(user: User) {
     const payload = {
       role: user.role,
-      email: user.email
+      email: user.email,
+      name: user.name
     };
     return {
       token: this.jwtService.sign(payload),
@@ -60,6 +61,7 @@ export class AuthService {
   public async getUsers(search?: string) {
     const query = this.userRepository.createQueryBuilder('user');
 
+    query.andWhere('user.role = :role', {role: 'seller'});
     if(search) {
       query.andWhere(
         '(user.name ILIKE :search OR user.email ILIKE :search)',
@@ -68,5 +70,11 @@ export class AuthService {
     const users = await query.getMany();
 
     return instanceToPlain(users);
+  }
+
+  public async getuserWithoutPassword(email: string) {
+    const user = await this.getUser(email);
+
+    return instanceToPlain(user);
   }
 }

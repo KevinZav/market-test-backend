@@ -7,13 +7,13 @@ import { Roles } from '../auth/guards/roles/roles.decorator';
 import { RoleEnum } from '../auth/enums/roles.enum';
 import { RolesGuard } from '../auth/guards/roles/roles.guard';
 
-@UseGuards(AuthGuard('jwt'))
 @Controller()
 export class ProductsController {
   constructor(
     private readonly productsService: ProductsService
   ) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   async getProducts(@Request() req) {
     const user = req.user;
@@ -24,6 +24,7 @@ export class ProductsController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   async createProduct(@Body() payload: createProductDto, @Request() req) {
     const { email } = req.user;
@@ -31,7 +32,6 @@ export class ProductsController {
     return await this.productsService.create(payload, email);
   }
 
-  @UseGuards(new RolesGuard(RoleEnum.client))
   @Get('all')
   async getProductsToClient(
     @Query('search') search: string,
@@ -42,15 +42,24 @@ export class ProductsController {
     const parsedMax = parseFloat(max);
     const filter: ProductFilters = {search, min: parsedMin, max: parsedMax};
 
-    return await this.productsService.getFilteredProducts(filter);
+    const products = await this.productsService.getFilteredProducts(filter);
+
+    return {
+      products
+    };
   }
 
   @UseGuards(new RolesGuard(RoleEnum.admin))
+  @UseGuards(AuthGuard('jwt'))
   @Get('by-seller')
   async getProductsForSeller(
     @Query('email') email: string
   ) {
-    return await this.productsService.getProductsByUser(email);
+    const products = await this.productsService.getProductsByUser(email);
+    
+    return {
+      products
+    };
   }
 
 }

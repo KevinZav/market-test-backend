@@ -5,7 +5,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from './guards/roles/roles.guard';
 import { RoleEnum } from './enums/roles.enum';
 
-
 @Controller()
 export class AuthController {
 
@@ -29,12 +28,15 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Get('info')
   async getUser(@Request() req) {
-    return req.user;
+    return await this.authService.getuserWithoutPassword(req.user.email);
   }
 
   @UseGuards(AuthGuard('jwt'), new RolesGuard(RoleEnum.admin))
   @Get('all')
   async getUsers(@Query('search') search: string) {
-    return await this.authService.getUsers(search);
+    const users = await this.authService.getUsers(search);
+    return {
+      users
+    };
   }
 }
